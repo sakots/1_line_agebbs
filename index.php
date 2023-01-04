@@ -127,6 +127,7 @@ function reply() {
 
 //通常表示モード
 function def() {
+  global $dat;
   try {
     //全スレッド取得
     $db = new PDO(DB_PDO);
@@ -170,6 +171,8 @@ function def() {
     $dat['ko'] = $ko;
 		$dat['oya'] = $oya;
     $db = null; //db切断
+    //HTML出力
+    return include 'main.html';
   } catch (PDOException $e) {
 		echo "DB接続エラー:" . $e->getMessage();
 	}
