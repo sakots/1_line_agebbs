@@ -23,4 +23,14 @@ function init() {
   } catch (PDOException $e) {
 		echo "DB接続エラー:" . $e->getMessage();
 	}
+  if (!is_writable(realpath("./"))) error("カレントディレクトリに書けません<br>");
+}
+
+//エラー画面
+function error($mes)
+{
+	global $db;
+	$db = null; //db切断
+	echo $mes;
+	exit;
 }
