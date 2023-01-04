@@ -37,10 +37,10 @@ exit;
 function init() {
   try {
     if (!is_file('age.db')) {
-      // はじめての実行ならDB作成
+      //はじめての実行ならDB作成
       $db = new PDO(DB_PDO);
 			$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-      // ID, 書いた日時, スレ親orレス, 親スレ, コメントID, スレ構造ID, 名前, 本文, age値
+      //ID, 書いた日時, スレ親orレス, 親スレ, コメントID, スレ構造ID, 名前, 本文, age値
       $sql = "CREATE TABLE tlog (tid integer primary key autoincrement, created TIMESTAMP, thread VARCHAR(1), parent INT, comid BIGINT, tree BIGINT, a_name TEXT, com TEXT, age INT)";
 			$db = $db->query($sql);
 			$db = null; //db切断
@@ -65,7 +65,7 @@ function regist() {
       $name = str_replace("'", "''", $name);
       $com = str_replace("'", "''", $com);
 
-      // age値取得
+      //age値取得
       $sqlage = "SELECT MAX(age) FROM tlog";
 			$age = $db->exec("$sqlage");
 			$tree = time() * 100000000;
@@ -109,7 +109,7 @@ function reply() {
       $name = str_replace("'", "''", $name);
       $com = str_replace("'", "''", $com);
 
-      // レスの位置
+      //レスの位置
 			$tree = time() - $parent - (int)$msgwc["tid"];
 			$comid = $tree + time();
 
@@ -130,7 +130,7 @@ function def() {
   try {
     //全スレッド取得
     $db = new PDO(DB_PDO);
-    $sql = "SELECT * FROM tlog WHERE invz=0 AND thread=1 ORDER BY tree DESC";
+    $sql = "SELECT * FROM tlog WHERE thread=1 ORDER BY tree DESC";
     $posts = $db->query($sql);
 
 		$ko = array();
@@ -144,7 +144,7 @@ function def() {
 				break;
 			} //スレがなくなったら抜ける
 			$oid = $bbsline["tid"]; //スレのtid(親番号)を取得
-			$sqli = "SELECT * FROM tlog WHERE parent = $oid AND invz=0 AND thread=0 ORDER BY comid ASC";
+			$sqli = "SELECT * FROM tlog WHERE parent = $oid AND thread=0 ORDER BY comid ASC";
 			//レス取得
 			$postsi = $db->query($sqli);
 			$j = 0;
@@ -155,17 +155,14 @@ function def() {
 					$flag = false;
 					break;
 				} //抜ける
-				$res['resno'] = ($j + 1); //レス番号
 				
 				//日付をUNIX時間に変換して設定どおりにフォーマット
 				$res['created'] = date(DATE_FORMAT, strtotime($res['created']));
-				$res['modified'] = date(DATE_FORMAT, strtotime($res['modified']));
 				$ko[] = $res;
 				$j++;
 			}
 			//日付をUNIX時間にしたあと整形
 			$bbsline['created'] = date(DATE_FORMAT, strtotime($bbsline['created']));
-			$bbsline['modified'] = date(DATE_FORMAT, strtotime($bbsline['modified']));
 			$oya[] = $bbsline;
 			$i++;
 		}
