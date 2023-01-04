@@ -5,6 +5,8 @@
 
 //データベース接続PDO
 define('DB_PDO', 'sqlite:age.db');
+//日付フォーマット
+define('DATE_FORMAT', 'Y/m/d H:i:s');
 
 //初期設定
 init();
@@ -74,6 +76,7 @@ function regist() {
 
       $sql = "INSERT INTO tlog (created, thread, parent, comid, tree, a_name, com, age) VALUES (datetime('now', 'localtime'), '$thread', '$parent', '$tree', '$tree', '$name', '$com', '$age')";
 			$db->exec($sql);
+      $db = null; //db切断
     }
   } catch (PDOException $e) {
 		echo "DB接続エラー:" . $e->getMessage();
@@ -115,6 +118,7 @@ function reply() {
 
       $sql = "INSERT INTO tlog (created, thread, parent, comid, tree, a_name, com, age) VALUES (datetime('now', 'localtime'), '$thread', '$parent', '$comid', '$tree', '$name', '$com', '$age')";
 			$db->exec($sql);
+      $db = null; //db切断
     }
   } catch (PDOException $e) {
 		echo "DB接続エラー:" . $e->getMessage();
@@ -123,7 +127,55 @@ function reply() {
 
 //通常表示モード
 function def() {
+  try {
+    //全スレッド取得
+    $db = new PDO(DB_PDO);
+    $sql = "SELECT * FROM tlog WHERE invz=0 AND thread=1 ORDER BY tree DESC";
+    $posts = $db->query($sql);
 
+		$ko = array();
+		$oya = array();
+
+    $i = 0;
+		$j = 0;
+    while ($i < 100) { //スレッドは100件にしとく
+			$bbsline = $posts->fetch();
+			if (empty($bbsline)) {
+				break;
+			} //スレがなくなったら抜ける
+			$oid = $bbsline["tid"]; //スレのtid(親番号)を取得
+			$sqli = "SELECT * FROM tlog WHERE parent = $oid AND invz=0 AND thread=0 ORDER BY comid ASC";
+			//レス取得
+			$postsi = $db->query($sqli);
+			$j = 0;
+			$flag = true;
+			while ($flag == true) {
+				$res = $postsi->fetch();
+				if (empty($res)) { //レスがなくなったら
+					$flag = false;
+					break;
+				} //抜ける
+				$res['resno'] = ($j + 1); //レス番号
+				
+				//日付をUNIX時間に変換して設定どおりにフォーマット
+				$res['created'] = date(DATE_FORMAT, strtotime($res['created']));
+				$res['modified'] = date(DATE_FORMAT, strtotime($res['modified']));
+				$ko[] = $res;
+				$j++;
+			}
+			//日付をUNIX時間にしたあと整形
+			$bbsline['created'] = date(DATE_FORMAT, strtotime($bbsline['created']));
+			$bbsline['modified'] = date(DATE_FORMAT, strtotime($bbsline['modified']));
+			$oya[] = $bbsline;
+			$i++;
+		}
+
+    $dat['ko'] = $ko;
+		$dat['oya'] = $oya;
+    $db = null; //db切断
+  } catch (PDOException $e) {
+		echo "DB接続エラー:" . $e->getMessage();
+	}
 }
 
 //エラー画面
