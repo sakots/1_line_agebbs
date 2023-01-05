@@ -3,6 +3,26 @@
 // 1行age機能付きbbsサンプル
 //----------
 
+//タイムゾーン設定
+date_default_timezone_set('Asia/Tokyo');
+
+//phpのバージョンが古い場合動かさせない(bladeがこのphpより古いと動かないため)
+if (($phpver = phpversion()) < "7.3.0") {
+	die("PHP version 7.3 or higher is required for this program to work. <br>\n(Current PHP version:{$phpver})");
+}
+
+//BladeOne v4.7.1
+include(__DIR__ . '/BladeOne/lib/BladeOne.php');
+
+use eftec\bladeone\BladeOne;
+
+$views = __DIR__ . '/'; // テンプレートフォルダ
+$cache = __DIR__ . '/cache'; // キャッシュフォルダ
+$blade = new BladeOne($views, $cache, BladeOne::MODE_AUTO); // MODE_DEBUGだと開発モード MODE_AUTOが速い。
+$blade->pipeEnable = true; // パイプのフィルターを使えるようにする
+
+$dat = array(); // bladeに格納する変数
+
 //データベース接続PDO
 define('DB_PDO', 'sqlite:age.db');
 //日付フォーマット
@@ -127,7 +147,7 @@ function reply() {
 
 //通常表示モード
 function def() {
-  global $dat;
+  global $dat, $blade;
   try {
     //全スレッド取得
     $db = new PDO(DB_PDO);
@@ -172,7 +192,7 @@ function def() {
 		$dat['oya'] = $oya;
     $db = null; //db切断
     //HTML出力
-    return include 'main.html';
+    echo $blade->run('main.blade.php', $dat);
   } catch (PDOException $e) {
 		echo "DB接続エラー:" . $e->getMessage();
 	}
