@@ -16,7 +16,7 @@ include(__DIR__ . '/BladeOne/lib/BladeOne.php');
 
 use eftec\bladeone\BladeOne;
 
-$views = __DIR__ . '/'; // テンプレートフォルダ
+$views = __DIR__ . '/template'; // テンプレートフォルダ
 $cache = __DIR__ . '/cache'; // キャッシュフォルダ
 $blade = new BladeOne($views, $cache, BladeOne::MODE_AUTO); // MODE_DEBUGだと開発モード MODE_AUTOが速い。
 $blade->pipeEnable = true; // パイプのフィルターを使えるようにする
