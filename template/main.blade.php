@@ -39,6 +39,7 @@
           リプライ -
           <label for="rep_a_name_{{$bbsline['tid']}}">名前：<input type="text" id="rep_a_name_{{$bbsline['tid']}}" name="name" size="10"></label>
           <label for="rep_com_{{$bbsline['tid']}}">本文：<input type="text" id="rep_com_{{$bbsline['tid']}}" name="com" size="20"></label>
+          <input type="hidden" name="parent" value="{{$bbsline['tid']}}">
           <input type="submit" id="submit" name="send" value="書き込む">
         </p>
       </form>
