@@ -18,6 +18,11 @@ use eftec\bladeone\BladeOne;
 
 $views = __DIR__ . '/template'; // テンプレートフォルダ
 $cache = __DIR__ . '/cache'; // キャッシュフォルダ
+
+if (!file_exists($cache)) {
+	mkdir($cache, 0777);
+}
+
 $blade = new BladeOne($views, $cache, BladeOne::MODE_AUTO); // MODE_DEBUGだと開発モード MODE_AUTOが速い。
 $blade->pipeEnable = true; // パイプのフィルターを使えるようにする
 
@@ -101,6 +106,7 @@ function regist() {
   } catch (PDOException $e) {
 		echo "DB接続エラー:" . $e->getMessage();
 	}
+	ok('書き込みに成功しました。画面を切り替えます。');
 }
 
 //投稿をデータベースへ保存 - リプライ
@@ -143,6 +149,7 @@ function reply() {
   } catch (PDOException $e) {
 		echo "DB接続エラー:" . $e->getMessage();
 	}
+	ok('書き込みに成功しました。画面を切り替えます。');
 }
 
 //通常表示モード
@@ -192,10 +199,18 @@ function def() {
 		$dat['oya'] = $oya;
     $db = null; //db切断
     //HTML出力
-    echo $blade->run('main.blade.php', $dat);
+    echo $blade->run('main', $dat);
   } catch (PDOException $e) {
 		echo "DB接続エラー:" . $e->getMessage();
 	}
+}
+
+//OK画面
+function ok($mes)
+{
+	global $blade, $dat;
+	$dat['ok'] = $mes;
+	echo $blade->run('ok', $dat);
 }
 
 //エラー画面
@@ -203,6 +218,8 @@ function error($mes)
 {
 	global $db;
 	$db = null; //db切断
-	echo $mes;
+	global $blade, $dat;
+	$dat['error'] = $mes;
+	echo $blade->run('error', $dat);
 	exit;
 }
