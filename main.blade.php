@@ -23,10 +23,12 @@
     @if (!empty($oya))
     @foreach ($oya as $bbsline)
     <section class="thread">
-      [{{$bbsline['tid']}}] - {{$bbsline['a_name']}} : {{$bbsline['com']}}
+      [{{$bbsline['tid']}}] : {{$bbsline['created']}} - {{$bbsline['a_name']}} : {{$bbsline['com']}}
       @if (!empty($ko))
 			@foreach ($ko as $res)
-        <section>└ [{{$ko['tid']}}] - {{$ko['a_name']}} : {{$ko['com']}}</section>
+      @if ($bbsline['tid'] === $res['parent'])
+        <section>└ [{{$res['tid']}}] : {{$res['created']}} - {{$res['a_name']}} : {{$res['com']}}</section>
+      @endif
       @endforeach
       @endif
       <form action="index.php?mode=reply">
