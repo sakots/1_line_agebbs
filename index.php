@@ -124,7 +124,7 @@ function reply() {
 			$sqlw = "SELECT * FROM tlog WHERE thread=0 ORDER BY tid DESC LIMIT 1";
 			$msgw = $db->prepare($sqlw);
 			$msgw->execute();
-			$msgwc = $msgw->fetch();
+			$msgwc = $msgw->fetch() ?: [];
 
       //最初のレスのage処理対策
 			$msgwc["tid"] = 0;
@@ -136,7 +136,7 @@ function reply() {
       $com = str_replace("'", "''", $com);
 
       //レスの位置
-			$tree = time() - $parent - (int)$msgwc["tid"];
+			$tree = time() - (int)$parent - (int)$msgwc["tid"];
 			$comid = $tree + time();
 
 			$thread = 0;

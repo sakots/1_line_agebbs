@@ -34,7 +34,7 @@
       @endif
       @endforeach
       @endif
-      <form action="index.php?mode=reply">
+      <form action="index.php?mode=reply" method="post" enctype="multipart/form-data">
         <p>
           リプライ -
           <label for="rep_a_name_{{$bbsline['tid']}}">名前：<input type="text" id="rep_a_name_{{$bbsline['tid']}}" name="name" size="10"></label>
