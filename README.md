@@ -8,4 +8,4 @@
 
 ## サンプル
 
-[サンプルBBS](htps://oekakibbs.moe/1line_sample)
+[サンプルBBS](https://oekakibbs.moe/1line_sample)
