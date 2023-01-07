@@ -139,6 +139,13 @@ function reply() {
 			$tree = time() - (int)$parent - (int)$msgwc["tid"];
 			$comid = $tree + time();
 
+			//age処理
+			$age = (int)$msgwc["age"];
+			$age++;
+			$agetree = $age + (time() * 100000000);
+			$sql_age = "UPDATE tlog SET age = $age, tree = $agetree WHERE tid = $parent";
+			$db->exec($sql_age);
+
 			$thread = 0;
 			$age = (int)$msgwc["age"];
 
