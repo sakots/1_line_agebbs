@@ -5,3 +5,7 @@
 - 最低限の機能しかありません
 - もちろんセキュリティもガバです
   - 最低限やろうと思ったのでBladeOne使いました
+
+## サンプル
+
+[サンプルBBS](htps://oekakibbs.moe/1line_sample)
